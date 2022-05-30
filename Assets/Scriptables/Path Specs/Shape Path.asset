@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d961675bcb5f72a49a4026fec37a7aff, type: 3}
+  m_Name: Shape Path
+  m_EditorClassIdentifier: 
+  pathName: Shape Path
+  pathNumber: 2
+  target:
+  - Number
+  - Shape
+  targetNumber: 10
+  firstPath: 0
+  groundColor: {r: 0.13333334, g: 0.85882354, b: 0.20392157, a: 0}
+  barrierColor: {r: 0.13333334, g: 0.7019608, b: 0.75686276, a: 0}
+  basketColor: {r: 0.9529412, g: 0.03137255, b: 0.03137255, a: 0}

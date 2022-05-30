@@ -1,0 +1,4 @@
+repository "Backgammon PRIME@Midas_Touch_Software@cloud"
+  path "/"
+    br "/main"
+    co "/main"
