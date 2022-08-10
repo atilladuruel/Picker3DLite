@@ -12,6 +12,11 @@ public class CheckPointController : MonoBehaviour
     [SerializeField] private TextMeshPro _targetText;
     [SerializeField] private GameObject _platform;
 
+    private void Start()
+    {
+        //gameObject.GetComponent<UnityEngine.EventSystems.PhysicsRaycaster>().enabled = false;
+    }
+
     private void Update()
     {
         if (transform.parent.gameObject.GetComponent<PathController>().GetActivePathInfo())
@@ -41,6 +46,7 @@ public class CheckPointController : MonoBehaviour
         yield return new WaitForSeconds(5.0f);
         if (_collectibles.Count >= transform.parent.gameObject.GetComponent<PathController>().GetPathSpecs().GetTargetNumber())
         {
+            PlayerDataController._ongoingGameHighScore ++;
             transform.parent.gameObject.GetComponent<PathController>().ActivateNextPath();
             _collectibles.Clear();
             _platform.GetComponent<Renderer>().material.color = transform.parent.gameObject.GetComponent<PathController>().GetPathSpecs().GetGroundColor();
@@ -49,6 +55,7 @@ public class CheckPointController : MonoBehaviour
         else
         {
             Debug.Log("Section Failed!");
+            collision.gameObject.GetComponent<PickerController>().RestartGame();
         }
     }
 

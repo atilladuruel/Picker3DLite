@@ -6,12 +6,24 @@ public class ColletableController : MonoBehaviour
 {
     //This class controls the behavior of collectible.
     [SerializeField] private CollectiblesSpecs _collectiblesSpecs;
+    private Color _collectibleColor = new Color(0, 0, 0);
 
     private void Start()
     {
-        if (_collectiblesSpecs != null)
+
+        if (_collectibleColor != null && _collectibleColor != Color.black)
         {
-            gameObject.GetComponent<Renderer>().material.color = _collectiblesSpecs.GetCollectibleColor();
+            ChangeColor(_collectibleColor);
+        }
+        else if (_collectiblesSpecs != null)
+        {
+            ChangeColor(_collectiblesSpecs.GetCollectibleColor());
         }
     }
+
+    public void ChangeColor(Color clr)
+    {
+        _collectibleColor = gameObject.GetComponent<Renderer>().material.color = clr;
+    }
+
 }

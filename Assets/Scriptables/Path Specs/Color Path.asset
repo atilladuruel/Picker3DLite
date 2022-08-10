@@ -18,6 +18,7 @@ MonoBehaviour:
   - Number
   - Color
   targetNumber: 15
+  targetMultiplayer: 1.5
   firstPath: 0
   groundColor: {r: 0.13333334, g: 0.85882354, b: 0.20392157, a: 0}
   barrierColor: {r: 0.13333334, g: 0.7019608, b: 0.75686276, a: 0}

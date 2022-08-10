@@ -11,6 +11,7 @@ public class PathsSpecs : ScriptableObject
     [SerializeField] private int pathNumber;
     [SerializeField] private List<string> target;
     [SerializeField] private int targetNumber;
+    [SerializeField] private float targetMultiplayer;
     [SerializeField] private bool firstPath;
 
     [SerializeField] private Color groundColor;
@@ -21,6 +22,7 @@ public class PathsSpecs : ScriptableObject
     public int GetPathNumber() { return pathNumber; }
     public List<string> GetTarget() { return target; }
     public int GetTargetNumber() { return targetNumber; }
+    public float GetTargetMultiplayer() { return targetMultiplayer; }
     public bool GetFirsPathInfo() { return firstPath; }
     public Color GetGroundColor() { return groundColor; }
     public Color GetBarrierColor() { return barrierColor; }

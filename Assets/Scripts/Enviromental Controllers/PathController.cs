@@ -10,11 +10,14 @@ public class PathController : MonoBehaviour
     [SerializeField] private GameObject _previousPathObject;
     [SerializeField] private List<GameObject> _collectibleObjects;
     [SerializeField] private GameObject _collectibleParentObject;
+    [SerializeField] private GameObject _lastCollectiblePointObject;
+    [SerializeField] private GameObject _startPointObject;
+    [SerializeField] private GameObject _checkPointObject;
     private bool _activePath = false;
     private bool _collectiblesSpawned = false;
     private List<GameObject> _spawnedCollectibleObjects = new List<GameObject>();
     private string _numberRule = "Number", _shapeRule = "Shape", _colorRule = "Color";
-    private float _minXSpawnValue = 10f, _maxXSpawnValue = 120f, _minZSpawnValue = -10f, _maxZSpawnValue = 10f, _minNextXSpawnValue = 2f, _maxNextXSpawnValue = 4f, _minNextZSpawnValue = -4f, _maxNextZSpawnValue = 4f;
+    private float _minZSpawnValue = -10f, _maxZSpawnValue = 10f, _minNextZSpawnValue = -4f, _maxNextZSpawnValue = 4f;
     private float _basketBasePosition;
 
     public PathsSpecs GetPathSpecs() { return _pathsSpecs; }
@@ -44,50 +47,60 @@ public class PathController : MonoBehaviour
             transform.GetChild(2).gameObject.GetComponent<Renderer>().material.color = _pathsSpecs.GetBasketColor();
             transform.GetChild(2).gameObject.transform.position = new Vector3(transform.GetChild(2).gameObject.transform.position.x, _basketBasePosition, transform.GetChild(2).gameObject.transform.position.z);
 
-            int spawningObjectNumber = (int)(_pathsSpecs.GetTargetNumber() * 2.5f);
-            float currentSpawningXLocation = _collectibleParentObject.transform.position.x + _minXSpawnValue;
+            int spawningObjectNumber = (int)(_pathsSpecs.GetTargetNumber() * _pathsSpecs.GetTargetMultiplayer());
+            float currentSpawningXLocation = _collectibleParentObject.transform.position.x;
+            float nextXSpawnValue = Mathf.Abs(currentSpawningXLocation - _lastCollectiblePointObject.transform.position.x) / spawningObjectNumber;
             float currentSpawningZLocation = 0;
 
-            foreach (string rule in _pathsSpecs.GetTarget())
+            for (int i = 0; i < spawningObjectNumber; i++)
             {
-                if (rule == _numberRule)
+                //Generating random X position for object
+                currentSpawningXLocation += nextXSpawnValue;
+                int objectShapeNumber = 0;
+
+                //Generating random Z position for object
+                if (_spawnedCollectibleObjects == null || _spawnedCollectibleObjects.Count == 0)
                 {
-                    for (int i = 0; i < spawningObjectNumber; i++)
+                    currentSpawningZLocation += Random.Range(_minNextZSpawnValue, _maxNextZSpawnValue);
+                }
+                else
+                {
+                    do
                     {
-                        //Generating random X position for object
-                        currentSpawningXLocation += Random.Range(_minNextXSpawnValue, _maxNextXSpawnValue);
+                        currentSpawningZLocation = _spawnedCollectibleObjects[_spawnedCollectibleObjects.Count - 1].transform.position.z + Random.Range(_minNextZSpawnValue, _maxNextZSpawnValue);
+                    } while (currentSpawningZLocation < _minZSpawnValue || currentSpawningZLocation > _maxZSpawnValue);
+                }
 
-                        //Generating random Z position for object
-                        if (_spawnedCollectibleObjects == null || _spawnedCollectibleObjects.Count == 0)
-                        {
-                            currentSpawningZLocation += Random.Range(_minNextZSpawnValue, _maxNextZSpawnValue);
-                        }
-                        else
-                        {
-                            do
-                            {
-                                currentSpawningZLocation = _spawnedCollectibleObjects[_spawnedCollectibleObjects.Count - 1].transform.position.z + Random.Range(_minNextZSpawnValue, _maxNextZSpawnValue);
-                            } while (currentSpawningZLocation < _minZSpawnValue || currentSpawningZLocation > _maxZSpawnValue);
-                        }
+                if (_pathsSpecs.GetTarget().Contains(_shapeRule))
+                {
+                    objectShapeNumber = Random.Range(0, _collectibleObjects.Count - 1);
+                }
+                else
+                    objectShapeNumber = 0;
 
 
-                        var position = new Vector3(currentSpawningXLocation, 0, currentSpawningZLocation);
-                        _spawnedCollectibleObjects.Add(Instantiate(_collectibleObjects[0], position, Quaternion.identity, _collectibleParentObject.transform));
+                var position = new Vector3(currentSpawningXLocation, 0, currentSpawningZLocation);
+                _spawnedCollectibleObjects.Add(Instantiate(_collectibleObjects[objectShapeNumber], position, Quaternion.identity, _collectibleParentObject.transform));
+
+
+                if (_pathsSpecs.GetTarget().Contains(_colorRule))
+                {
+                    if (_spawnedCollectibleObjects[_spawnedCollectibleObjects.Count - 1].GetComponent<ColletableController>() != null)
+                    {
+                        _spawnedCollectibleObjects[_spawnedCollectibleObjects.Count - 1].GetComponent<ColletableController>().ChangeColor(new Color(Random.Range(0, 255), Random.Range(0, 255), Random.Range(0, 255)));
                     }
-                }
-
-                if (rule == _shapeRule)
-                {
-
-                }
-
-                if (rule == _colorRule)
-                {
-
+                    else
+                    {
+                        Debug.Log("Collectible null!");
+                    }
                 }
             }
 
-            _collectiblesSpawned = true;
+
+
+
+
+            SetCollectibleSpawnedInfo(true);
         }
     }
 
@@ -98,14 +111,17 @@ public class PathController : MonoBehaviour
             Destroy(temp);
         }
         _spawnedCollectibleObjects.Clear();
+
+        SetCollectibleSpawnedInfo(false);
     }
 
     public void ActivateNextPath()
     {
         SetActivePathInfo(false);
-        SetCollectibleSpawnedInfo(false);
         _nextPathObject.GetComponent<PathController>().SetActivePathInfo(true);
         DestroyCollectibles();
+        ActivateCheckPoint(false);
+        _nextPathObject.GetComponent<PathController>().ActivateCheckPoint(true);
         float verticalPathSize = _nextPathObject.transform.position.x - transform.position.x;
         _previousPathObject.transform.position = new Vector3(_nextPathObject.transform.position.x + verticalPathSize, _nextPathObject.transform.position.y, _nextPathObject.transform.position.z);
     }
@@ -129,6 +145,11 @@ public class PathController : MonoBehaviour
     public void SetCollectibleSpawnedInfo(bool on)
     {
         _collectiblesSpawned = on;
+    }
+
+    public void ActivateCheckPoint(bool on)
+    {
+        _checkPointObject.SetActive(on);
     }
 
 }
