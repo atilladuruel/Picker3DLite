@@ -168,6 +168,7 @@ public class PickerController : MonoBehaviour
             }
         }
 
+        PlayerDataController._ongoingGameHighScore = 1;
         _pathGameObjects[0].GetComponent<PathController>().SetActivePathInfo(true);
     }
 

@@ -67,7 +67,6 @@ public class UIController : MonoBehaviour
         _hudPanel.SetActive(true);
         _menuPanel.SetActive(false);
         _menuActive = false;
-        PlayerDataController._ongoingGameHighScore = 1;
 
         if (_pickerGameObject.GetComponent<PickerController>() != null)
         {
